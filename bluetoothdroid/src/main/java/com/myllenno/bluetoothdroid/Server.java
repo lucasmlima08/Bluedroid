@@ -11,43 +11,36 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
-public class Servidor {
+public class Server {
 
     private InputStream inputStream;
 
-    // Identificadores.
     private UUID uuid;
     private String pin;
 
     private BluetoothServerSocket bluetoothServerSocket;
 
-    // Identificador único do bluetooth cliente.
-    public void setIdentificador(UUID uuid, String pin){
-        this.uuid = uuid;
+    public Server(String strUUID, String pin){
+        uuid = UUID.fromString(strUUID);
         this.pin = pin;
     }
 
     // Abre a conexão do servidor.
     // Retorna um valor booleano que verifica se foi aberto com sucesso.
-    public boolean abrirConexao(){
-        try {
-            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(pin, uuid);
-            return true;
-        } catch (IOException e){
-            return false;
-        }
+    public void openConnection() throws IOException {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(pin, uuid);
     }
 
     // Fecha a conexão.
-    public void fecharConexao() throws IOException {
+    public void closeConnection() throws IOException {
         inputStream.close();
         bluetoothServerSocket.close();
     }
 
     // Recebe clientes que fizerem a conexão.
     // Permite que o servidor possa receber mais de um cliente para controlar a sua conexão.
-    public BluetoothSocket receberCliente(){
+    public BluetoothSocket receiveClients(){
         try {
             BluetoothSocket bluetoothSocket = bluetoothServerSocket.accept();
             return bluetoothSocket;
@@ -59,14 +52,14 @@ public class Servidor {
 
     // Recebe os dados do cliente conectado.
     // Pode ser utilizado em um Thread ou um método de loop enquanto estiver conectado.
-    public Object receberDados(BluetoothSocket bluetoothSocket) throws Exception {
+    public Object receiveData(BluetoothSocket bluetoothSocket) throws Exception {
         inputStream = bluetoothSocket.getInputStream();
-        Object dados = deserializarDados(inputStream);
+        Object dados = serializerRead(inputStream);
         return dados;
     }
 
     // Realiza a leitura dos dados serializados.
-    private Object deserializarDados(InputStream inputStream) throws Exception {
+    private Object serializerRead(InputStream inputStream) throws Exception {
         Serializer serializer = new Persister();
         Object dados = serializer.read(Object.class, inputStream);
         return dados;

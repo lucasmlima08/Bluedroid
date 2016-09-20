@@ -1,4 +1,4 @@
-package com.myllenno.bluetoothdroid;
+package com.myllenno.bluetoothdroid_project;
 
 import org.junit.Test;
 

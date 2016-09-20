@@ -11,42 +11,41 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
 
-public class Cliente {
+public class Client {
 
     private OutputStream outputStream;
 
     private UUID uuid;
 
-    // Identificador único do bluetooth cliente.
-    public void setIdentificador(UUID uuid){
-        this.uuid = uuid;
+    public Client(String strUUID){
+        uuid = UUID.fromString(strUUID);
     }
 
     // Abre a conexão com o servidor.
     // Permite que o cliente possa abrir uma conexão com mais de um servidor para controlar a sua comunicação.
-    public BluetoothSocket abrirConexao(String MAC_servidor) throws IOException {
+    public BluetoothSocket openConnection(String addressMAC) throws IOException {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(MAC_servidor);
+        BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(addressMAC);
         BluetoothSocket bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
         bluetoothSocket.connect();
         return bluetoothSocket;
     }
 
     // Fecha a conexao.
-    public void fecharConexao() throws IOException {
+    public void closeConnection() throws IOException {
         outputStream.close();
     }
 
     // Envia o objeto por socket para o servidor.
     // Pode ser utilizado em um Thread ou um método de loop enquanto estiver conectado.
-    public void enviarDados(BluetoothSocket bluetoothSocket, Object dados) throws Exception {
+    public void sendData(BluetoothSocket bluetoothSocket, Object dados) throws Exception {
         outputStream = bluetoothSocket.getOutputStream();
-        byte[] bytes = serializarDados(dados);
+        byte[] bytes = serializerWrite(dados);
         outputStream.write(bytes);
     }
 
     // Realiza a serialização dos dados.
-    private byte[] serializarDados(Object dados) throws Exception {
+    private byte[] serializerWrite(Object dados) throws Exception {
         OutputStream outputStream = null;
         Serializer serializer = new Persister();
         serializer.write(dados, outputStream);

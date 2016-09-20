@@ -11,17 +11,11 @@ import android.content.IntentFilter;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class Suporte {
-
-    private BluetoothAdapter bluetoothAdapter;
-
-    public Suporte(){
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    }
+public class Controller {
 
     //- Verifica se o dispositivo tem suporte ao bluetooth.
-    public Boolean verificarSuporteBluetooth(){
-        if (bluetoothAdapter == null){
+    public Boolean isSupported(){
+        if (BluetoothAdapter.getDefaultAdapter() == null){
             return false;
         } else {
             return true;
@@ -29,9 +23,8 @@ public class Suporte {
     }
 
     // Verifica se o Bluetooth está ativado.
-    public Boolean verificarAtivacaoDoBluetooth(){
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter.isEnabled()){
+    public Boolean isEnabled(){
+        if (BluetoothAdapter.getDefaultAdapter().isEnabled()){
             return true;
         } else {
             return false;
@@ -39,8 +32,8 @@ public class Suporte {
     }
 
     //- Pede permissão para ativar o bluetoth.
-    public void permissaoParaAtivarBluetooth(Activity activity){
-        if (!bluetoothAdapter.isEnabled()) {
+    public void permissionToActivate(Activity activity){
+        if (!BluetoothAdapter.getDefaultAdapter().isEnabled()) {
             Intent bluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             activity.startActivityForResult(bluetooth, 1);
         }
@@ -48,14 +41,14 @@ public class Suporte {
 
     // Pede permissão para tornar o dispositivo visível por 300 segundos.
     Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-    public void ativarVisibilidadeDoBluetooth(Activity activity){
+    public void enableVisibility(Activity activity){
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         activity.startActivity(discoverableIntent);
     }
 
     // Retorna a lista de dispositivos pareados.
-    public ArrayList<BluetoothDevice> listaDeDispositivosPareados(){
-        Set<BluetoothDevice> setDispositivos = bluetoothAdapter.getBondedDevices();
+    public ArrayList<BluetoothDevice> listPairedDevices(){
+        Set<BluetoothDevice> setDispositivos = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
         ArrayList<BluetoothDevice> dispositivos = new ArrayList<BluetoothDevice>();
         for (BluetoothDevice device: setDispositivos){
             dispositivos.add(device);
@@ -64,10 +57,10 @@ public class Suporte {
     }
 
     // Inicia a procura por dispositivos não pareados e os guarda na lista.
-    private ArrayList<BluetoothDevice> dispositivosDesconhecidos;
+    private ArrayList<BluetoothDevice> unknownDevices;
     IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-    public void iniciarBuscaPorDispositivosDesconhecidos(Activity activity) {
-        dispositivosDesconhecidos = new ArrayList<BluetoothDevice>();
+    public void startSearchNewDevices(Activity activity) {
+        unknownDevices = new ArrayList<BluetoothDevice>();
         activity.registerReceiver(broadcastReceiver, filter);
     }
 
@@ -79,18 +72,18 @@ public class Suporte {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                dispositivosDesconhecidos.add(device);
+                unknownDevices.add(device);
             }
         }
     };
 
     // Interrompe a busca por dispositivos não pareados.
-    public void interromperBuscaPorDispositivosDesconhecidos() {
+    public void stopSearchNewDevices() {
         broadcastReceiver.abortBroadcast();
     }
 
     // Retorna a lista de dispositivos encontrados na busca por dispositivos não pareados.
-    public ArrayList<BluetoothDevice> listaDeDispositivosDesconhecidos() {
-        return dispositivosDesconhecidos;
+    public ArrayList<BluetoothDevice> listOfUnknownDevices() {
+        return unknownDevices;
     }
 }
