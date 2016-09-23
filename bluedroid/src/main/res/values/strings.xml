@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">BluetoothDroid</string>
+
+    <string name="titleChoiceDialogSelectDevicePaired">Deseja selecionar qual dispositivo?</string>
+    <string name="acceptChoiceDialogSelectDevicePaired">Aceitar</string>
+    <string name="rejectChoiceDialogSelectDevicePaired">Cancelar</string>
+
+    <string name="titleChoiceDialogSelectDeviceToPairing">Deseja parear a qual dispositivo?</string>
+    <string name="acceptChoiceDialogSelectDeviceToPairing">Aceitar</string>
+    <string name="rejectChoiceDialogSelectDeviceToPairing">Cancelar</string>
+</resources>

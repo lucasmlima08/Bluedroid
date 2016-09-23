@@ -1,4 +1,4 @@
-package com.myllenno.bluetoothdroid;
+package com.myllenno.bluetoothdroid.connection;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
