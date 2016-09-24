@@ -1,11 +1,21 @@
 <resources>
-    <string name="app_name">BluetoothDroid</string>
+    <string name="app_name">Bluetooth</string>
 
     <string name="titleChoiceDialogSelectDevicePaired">Deseja selecionar qual dispositivo?</string>
-    <string name="acceptChoiceDialogSelectDevicePaired">Aceitar</string>
-    <string name="rejectChoiceDialogSelectDevicePaired">Cancelar</string>
-
     <string name="titleChoiceDialogSelectDeviceToPairing">Deseja parear a qual dispositivo?</string>
-    <string name="acceptChoiceDialogSelectDeviceToPairing">Aceitar</string>
-    <string name="rejectChoiceDialogSelectDeviceToPairing">Cancelar</string>
+
+    <string name="messageChoiceDialogSelectDevicePairedEmpty">Não há dispositivos pareados!</string>
+    <string name="buttonChoiceDialogSelectDevicePairedEmpty">Aceitar</string>
+
+    <string name="messageChoiceDialogSelectDeviceUnpairedEmpty">Procurando dispositivos...</string>
+    <string name="buttonChoiceDialogSelectDeviceUnpairedEmpty">Cancelar</string>
+
+    <string name="acceptChoiceDialogSelectDevice">Aceitar</string>
+    <string name="rejectChoiceDialogSelectDevice">Cancelar</string>
+
+    <string name="enable_bluetooth">Ativado</string>
+    <string name="disable_bluetooth">Desativado</string>
+
+    <string name="title_devices_paired">Dispositivos Conhecidos</string>
+    <string name="title_devices_unpaired">Dispositivos Desconhecidos</string>
 </resources>

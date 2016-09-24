@@ -33,7 +33,7 @@ public class Support {
     }
 
     //- Pede permissão para ativar o bluetoth.
-    public void permissionToActivate(Activity activity) {
+    public void enable(Activity activity) {
         if (!BluetoothAdapter.getDefaultAdapter().isEnabled()) {
             Intent bluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             activity.startActivityForResult(bluetooth, 1);
