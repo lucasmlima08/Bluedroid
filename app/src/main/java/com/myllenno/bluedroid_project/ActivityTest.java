@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.myllenno.bluetoothdroid.Devices.DevicesPaired;
-import com.myllenno.bluetoothdroid.Devices.DevicesUnpaired;
+import com.myllenno.bluetoothdroid.devices.DevicesPaired;
+import com.myllenno.bluetoothdroid.devices.DevicesUnpaired;
 import com.myllenno.bluetoothdroid.configuration.Support;
 
 import java.util.logging.Handler;

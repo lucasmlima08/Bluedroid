@@ -1,4 +1,4 @@
-package com.myllenno.bluetoothdroid.Devices;
+package com.myllenno.bluetoothdroid.devices;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.view.View;
 
 import com.myllenno.bluetoothdroid.R;
 import com.myllenno.bluetoothdroid.functions.DialogBuilder;

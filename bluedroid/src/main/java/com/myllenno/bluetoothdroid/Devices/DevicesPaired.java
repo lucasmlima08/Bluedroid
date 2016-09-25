@@ -1,4 +1,4 @@
-package com.myllenno.bluetoothdroid.Devices;
+package com.myllenno.bluetoothdroid.devices;
 
 import com.myllenno.bluetoothdroid.functions.DialogBuilder;
 
@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
-import android.util.Log;
 
 import com.myllenno.bluetoothdroid.R;
 
