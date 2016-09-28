@@ -4,64 +4,138 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
-
-import java.io.IOException;
+import com.google.gson.Gson;
 import java.io.InputStream;
 import java.util.UUID;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 public class Server {
 
-    private InputStream inputStream;
+    /**
+     * Comunicações da classe de eventos.
+     */
+    public final String dialogConnectionOpened = "CONNECTION_OPENED";
+    public final String dialogConnectionClosed = "CONNECTION_CLOSED";
+    public final String dialogClientReceived = "CLIENT_RECEIVED";
+    public final String dialogDataReceived = "DATA_RECEIVED";
+    public final String dialogEmptyDataReceived = "EMPTY_DATA_RECEIVED";
 
-    private UUID uuid;
-    private String pin;
-
+    /**
+     * Instância responsável por controlar a conexão de socket do servidor.
+     */
     private BluetoothServerSocket bluetoothServerSocket;
 
+    /**
+     * Instância responsável por controlar os eventos da classe.
+     */
+    private Handler handler;
+
+    /**
+     * Instância do dentificador único universal da aplicação.
+     */
+    private UUID uuid;
+
+    /**
+     * Instância do dentificador pin da comunicação.
+     */
+    private String pin;
+
+    /**
+     * Recebe o identificador único universal e o pin da comunicação.
+     *
+     * @param strUUID
+     * @param pin
+     */
     public Server(String strUUID, String pin){
         uuid = UUID.fromString(strUUID);
         this.pin = pin;
     }
 
-    // Abre a conexão do servidor.
-    // Retorna um valor booleano que verifica se foi aberto com sucesso.
-    public void openConnection() throws IOException {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(pin, uuid);
+    /**
+     * Define o socket do novo servidor.
+     *
+     * @param bluetoothServerSocket
+     */
+    public void setServer(BluetoothServerSocket bluetoothServerSocket){
+        this.bluetoothServerSocket = bluetoothServerSocket;
     }
 
-    // Fecha a conexão.
-    public void closeConnection() throws IOException {
-        inputStream.close();
-        bluetoothServerSocket.close();
+    /**
+     * Retorna a instância do socket do servidor.
+     *
+     * @return
+     */
+    public BluetoothServerSocket getServer(){
+        return bluetoothServerSocket;
     }
 
-    // Recebe clientes que fizerem a conexão.
-    // Permite que o servidor possa receber mais de um cliente para controlar a sua conexão.
-    public BluetoothSocket receiveClients(){
+    /**
+     * Adiciona a classe de eventos para receber informações de quando um evento ocorre.
+     *
+     * @param handler
+     */
+    public void setHandler(Handler handler){
+        this.handler = handler;
+    }
+
+    /**
+     * Abre a conexão do servidor.
+     */
+    public void openConnection() {
         try {
-            BluetoothSocket bluetoothSocket = bluetoothServerSocket.accept();
-            return bluetoothSocket;
-        } catch (IOException e) {
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(pin, uuid);
+            handlerPublish(Level.INFO, dialogConnectionOpened);
+        } catch (Exception e){
+            handlerPublish(Level.SEVERE, e.toString());
             e.printStackTrace();
         }
-        return null;
     }
 
-    // Recebe os dados do cliente conectado.
-    // Pode ser utilizado em um Thread ou um método de loop enquanto estiver conectado.
-    public Object receiveData(BluetoothSocket bluetoothSocket) throws Exception {
-        inputStream = bluetoothSocket.getInputStream();
-        Object dados = serializerRead(inputStream);
-        return dados;
+    /**
+     * Fecha a conexão.
+     */
+    public void closeConnection() {
+        try {
+            bluetoothServerSocket.close();
+            handlerPublish(Level.INFO, dialogConnectionClosed);
+        } catch (Exception e){
+            handlerPublish(Level.SEVERE, e.toString());
+            e.printStackTrace();
+        }
     }
 
-    // Realiza a leitura dos dados serializados.
-    private Object serializerRead(InputStream inputStream) throws Exception {
-        Serializer serializer = new Persister();
-        Object dados = serializer.read(Object.class, inputStream);
-        return dados;
+    /**
+     * Recebe novos clientes.
+     * Permite que o servidor possa receber um ou mais de um clientes e controlar sua conexão.
+     *
+     * @return
+     */
+    public Client receiveClients() {
+        try {
+            BluetoothSocket bluetoothSocket = bluetoothServerSocket.accept();
+            Client client = new Client(uuid.toString());
+            client.setClient(bluetoothSocket);
+            handlerPublish(Level.INFO, dialogClientReceived);
+            return client;
+        } catch (Exception e){
+            handlerPublish(Level.SEVERE, e.toString());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Publica o evento ocorrido.
+     *
+     * @param level
+     * @param dialog
+     */
+    private void handlerPublish(Level level, String dialog){
+        if (handler != null){
+            handler.publish(new LogRecord(level, dialog));
+        }
     }
 }

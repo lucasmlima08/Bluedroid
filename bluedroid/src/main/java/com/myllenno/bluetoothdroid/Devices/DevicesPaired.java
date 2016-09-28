@@ -19,8 +19,8 @@ import java.util.logging.LogRecord;
 
 public class DevicesPaired {
 
-    public final String dialogDeviceSelected = "SELECTED";
-    public final String dialogDeviceRefused = "REFUSED";
+    public final String dialogDeviceSelected = "DEVICE_SELECTED";
+    public final String dialogDeviceRefused = "DEVICE_REFUSED";
     public final String dialogDeviceEmpty = "EMPTY";
 
     private Handler handler;

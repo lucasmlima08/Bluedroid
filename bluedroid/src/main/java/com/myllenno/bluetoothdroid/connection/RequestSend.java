@@ -1,24 +1,22 @@
 package com.myllenno.bluetoothdroid.connection;
 
-import android.bluetooth.BluetoothSocket;
-
 import java.util.ArrayList;
 
 public class RequestSend {
 
     private Object object;
-    private ArrayList<BluetoothSocket> listDevices;
+    private ArrayList<Client> listClients;
 
-    public RequestSend(Object object, ArrayList<BluetoothSocket> listDevices){
+    public RequestSend(Object object, ArrayList<Client> listDevices){
         this.object = object;
-        this.listDevices = listDevices;
+        this.listClients = listDevices;
     }
     // Requisição enviada.
     public Object getObject(){
         return object;
     }
     // Dispositivos que receberão a requisição.
-    public ArrayList<BluetoothSocket> getListDevices(){
-        return listDevices;
+    public ArrayList<Client> getListDevices(){
+        return listClients;
     }
 }

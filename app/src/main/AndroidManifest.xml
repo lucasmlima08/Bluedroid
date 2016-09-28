@@ -6,8 +6,12 @@
         android:allowBackup="true"
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.AppCompat.Light">
+        <activity android:name=".DialogDevices">
+
+        </activity>
         <activity
-            android:name=".ActivityTest">
+            android:name=".Minichat"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

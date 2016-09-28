@@ -9,12 +9,14 @@ public class Controller {
     private Client client;
     private Server server;
 
-    private ArrayList<BluetoothSocket> listDevices;
+    private ArrayList<Client> listClients;
     private ArrayList<RequestSend> listRequestsSend;
     private ArrayList<RequestReceived> listRequestsReceived;
 
+    private Object objectType;
+
     public Controller(String uuidClient, String uuidServer, String pin){
-        listDevices = new ArrayList<>();
+        listClients = new ArrayList<>();
         listRequestsSend = new ArrayList<>();
         listRequestsReceived = new ArrayList<>();
 
@@ -23,8 +25,8 @@ public class Controller {
     }
 
     // Adicionar um dispositivo a lista de dispositivos.
-    public void addDevice(BluetoothSocket bluetoothSocket){
-        listDevices.add(bluetoothSocket);
+    public void addClient(Client bluetoothSocket){
+        listClients.add(bluetoothSocket);
     }
 
     // Adicionar uma requisição para envio.
@@ -32,9 +34,14 @@ public class Controller {
         listRequestsSend.add(request);
     }
 
+    // Define o tipo de objeto serializado.
+    public void setObjectType(Object objectType){
+        this.objectType = objectType;
+    }
+
     // Retorna a lista de todos os dispositivos conectados.
-    public ArrayList<BluetoothSocket> getAllDevices(){
-        return listDevices;
+    public ArrayList<Client> getAllClients(){
+        return listClients;
     }
 
     // Retorna a lista de todas as requisições para envio.
@@ -59,28 +66,28 @@ public class Controller {
 
     // Recebe as requisições de todos os dispositivos conectados.
     public void receiveRequestsAll() {
-        for (int i = 0; i < listDevices.size(); i++) {
+        for (int i = 0; i < listClients.size(); i++) {
             // Verifica se está conectado.
-            if (listDevices.get(i).isConnected()) {
+            if (listClients.get(i).getClient().isConnected()) {
                 // Recebe a requisição do dispositivo conectado.
-                receiveRequest(listDevices.get(i));
+                receiveRequest(listClients.get(i));
             } else {
                 // Remove o device da lista.
-                listDevices.remove(i);
+                listClients.remove(i);
                 i--;
             }
         }
     }
 
-    // Recebe apenas uma requisição do dispositivo.
-    public void receiveRequest(final BluetoothSocket bluetoothSocket) {
+    // Recebe apenas uma requisição do cliente.
+    public void receiveRequest(final Client client) {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     // Recebe a requisição do dispositivo conectado e salva na lista.
-                    Object object = server.receiveData(bluetoothSocket);
-                    RequestReceived requestReceived = new RequestReceived(object, bluetoothSocket);
+                    Object object = client.receiveData(objectType);
+                    RequestReceived requestReceived = new RequestReceived(object, client);
                     listRequestsReceived.add(requestReceived);
                 } catch (Exception e) {}
             }
@@ -104,9 +111,9 @@ public class Controller {
                 for (int i=0; i < request.getListDevices().size(); i++){
                     try {
                         // Verifica se está conectado
-                        if (request.getListDevices().get(i).isConnected()){
+                        if (request.getListDevices().get(i).getClient().isConnected()){
                             // Envia a requisição para o dispositivo da lista.
-                            client.sendData(request.getListDevices().get(i), request.getObject());
+                            client.sendData(request.getObject());
                         } else {
                             // Não implementado: Guarda no banco de dados para enviar depois.
                         }

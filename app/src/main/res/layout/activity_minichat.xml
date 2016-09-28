@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_minichat"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.myllenno.bluedroid_project.Minichat"
+    android:background="?attr/colorPrimary">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                app:srcCompat="@drawable/wifi"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:layout_width="80dp"
+                android:layout_alignParentTop="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Simple Chat"
+                android:id="@+id/textView"
+                android:textSize="30dp"
+                android:textAlignment="center"
+                android:layout_weight="1"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+
+            <ImageView
+                app:srcCompat="@drawable/wifi"
+                android:id="@+id/imageView"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:layout_width="80dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+        <Button
+            android:text="Select Friend"
+            android:textSize="22sp"
+            android:layout_width="match_parent"
+            android:onClick="selectDevice"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textAllCaps="false"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@android:color/holo_blue_dark"
+            android:textColor="?attr/colorBackgroundFloating"
+            android:layout_height="60dp" />
+
+        <TextView
+            android:text="Connection Status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/tvStatus"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="32dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="?attr/colorPrimary">
+
+                <TextView
+                    android:text="ID Friend"
+                    android:id="@+id/idFriend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:inputType="textMultiLine"
+                    android:ems="10"
+                    android:id="@+id/etMessageReceived"
+                    android:hint="Message..."
+                    android:selectAllOnFocus="false"
+                    android:textAlignment="center"
+                    android:background="?attr/colorBackgroundFloating"
+                    android:layout_height="80dp"
+                    android:fontFamily="casual"
+                    android:textColor="@android:color/background_dark"
+                    android:textColorHint="@android:color/background_dark"
+                    android:clickable="false"
+                    android:enabled="false" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="?attr/colorPrimary">
+
+                <TextView
+                    android:text="ID User"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:id="@+id/idUser" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:inputType="textMultiLine"
+                    android:ems="10"
+                    android:id="@+id/etMessageSend"
+                    android:hint="Message..."
+                    android:selectAllOnFocus="false"
+                    android:background="?attr/colorBackgroundFloating"
+                    android:layout_height="80dp"
+                    android:textColor="@android:color/background_dark"
+                    android:textColorHint="@android:color/background_dark"
+                    android:textAlignment="center"
+                    android:fontFamily="casual" />
+
+                <Button
+                    android:text="Send"
+                    android:textSize="22sp"
+                    android:layout_width="match_parent"
+                    android:onClick="sendMessage"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textAllCaps="false"
+                    android:background="?attr/colorAccent"
+                    android:textColor="@android:color/background_light"
+                    android:layout_height="60dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
