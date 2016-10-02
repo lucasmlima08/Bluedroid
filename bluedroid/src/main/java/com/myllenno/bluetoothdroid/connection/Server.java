@@ -4,8 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 
-import com.google.gson.Gson;
-import java.io.InputStream;
+import com.myllenno.bluetoothdroid.report.HandlerDialog;
+
 import java.util.UUID;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -14,18 +14,9 @@ import java.util.logging.LogRecord;
 public class Server {
 
     /**
-     * Comunicações da classe de eventos.
+     * Classe de comunicação do evento ocorrido.
      */
-    public final String dialogConnectionOpened = "CONNECTION_OPENED";
-    public final String dialogConnectionClosed = "CONNECTION_CLOSED";
-    public final String dialogClientReceived = "CLIENT_RECEIVED";
-    public final String dialogDataReceived = "DATA_RECEIVED";
-    public final String dialogEmptyDataReceived = "EMPTY_DATA_RECEIVED";
-
-    /**
-     * Instância responsável por controlar a conexão de socket do servidor.
-     */
-    private BluetoothServerSocket bluetoothServerSocket;
+    private HandlerDialog handlerDialog;
 
     /**
      * Instância responsável por controlar os eventos da classe.
@@ -43,6 +34,11 @@ public class Server {
     private String pin;
 
     /**
+     * Instância responsável por controlar a conexão de socket do servidor.
+     */
+    private BluetoothServerSocket bluetoothServerSocket;
+
+    /**
      * Recebe o identificador único universal e o pin da comunicação.
      *
      * @param strUUID
@@ -51,6 +47,16 @@ public class Server {
     public Server(String strUUID, String pin){
         uuid = UUID.fromString(strUUID);
         this.pin = pin;
+        handlerDialog = new HandlerDialog();
+    }
+
+    /**
+     * Adiciona a classe de eventos para receber informações de quando um evento ocorrer.
+     *
+     * @param handler
+     */
+    public void setHandler(Handler handler){
+        this.handler = handler;
     }
 
     /**
@@ -59,6 +65,11 @@ public class Server {
      * @param bluetoothServerSocket
      */
     public void setServer(BluetoothServerSocket bluetoothServerSocket){
+        // Primeiro passo: Verifica se o servidor já está aberto e o fecha.
+        if (isAvailable()){
+            closeConnection();
+        }
+        // Segundo passo: Define a nova instância do servidor.
         this.bluetoothServerSocket = bluetoothServerSocket;
     }
 
@@ -72,22 +83,18 @@ public class Server {
     }
 
     /**
-     * Adiciona a classe de eventos para receber informações de quando um evento ocorre.
-     *
-     * @param handler
-     */
-    public void setHandler(Handler handler){
-        this.handler = handler;
-    }
-
-    /**
      * Abre a conexão do servidor.
      */
     public void openConnection() {
         try {
+            // Primeiro passo: Verifica se o servidor já está aberto e o fecha.
+            if (isAvailable()){
+                closeConnection();
+            }
+            // Segundo passo: Abre uma nova conexão do servidor.
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(pin, uuid);
-            handlerPublish(Level.INFO, dialogConnectionOpened);
+            handlerPublish(Level.INFO, handlerDialog.CONNECTION_OPENED);
         } catch (Exception e){
             handlerPublish(Level.SEVERE, e.toString());
             e.printStackTrace();
@@ -95,31 +102,76 @@ public class Server {
     }
 
     /**
-     * Fecha a conexão.
-     */
-    public void closeConnection() {
-        try {
-            bluetoothServerSocket.close();
-            handlerPublish(Level.INFO, dialogConnectionClosed);
-        } catch (Exception e){
-            handlerPublish(Level.SEVERE, e.toString());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Recebe novos clientes.
-     * Permite que o servidor possa receber um ou mais de um clientes e controlar sua conexão.
+     * Verifica se o servidor está aberto e disponível.
      *
      * @return
      */
-    public Client receiveClients() {
+    public boolean isAvailable(){
+        if (bluetoothServerSocket != null) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Recebe novos clientes que venham a se conectar.
+     *
+     * Pode ser usado em um thread para permitir que o servidor possa receba
+     * um ou mais de um clientes para controlar a sua conexão.
+     *
+     * @return
+     */
+    public Client receiveClient() {
         try {
-            BluetoothSocket bluetoothSocket = bluetoothServerSocket.accept();
-            Client client = new Client(uuid.toString());
-            client.setClient(bluetoothSocket);
-            handlerPublish(Level.INFO, dialogClientReceived);
-            return client;
+            // Primeiro passo: Verifica se o servidor está aberto.
+            if (isAvailable()) {
+                // Segundo passo: Inicia a espera por um novo cliente
+                BluetoothSocket bluetoothSocket = bluetoothServerSocket.accept();
+                // Terceiro passo: Cria a classe com o novo cliente.
+                Client client = new Client(uuid.toString());
+                client.setClient(bluetoothSocket);
+                handlerPublish(Level.INFO, handlerDialog.CLIENT_RECEIVED);
+                return client;
+
+            // Caso o servidor não esteja disponível.
+            } else {
+                handlerPublish(Level.INFO, handlerDialog.CONNECTION_CLOSED);
+                return null;
+            }
+        } catch (Exception e){
+            handlerPublish(Level.SEVERE, e.toString());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Recebe novos clientes que venham a se conectar.
+     * Recebe o tempo de espera que deverá aguardar o cliente.
+     *
+     * Pode ser usado em um thread para permitir que o servidor possa receba
+     * um ou mais de um clientes para controlar a sua conexão.
+     *
+     * @param timeout
+     * @return
+     */
+    public Client receiveClient(int timeout) {
+        try {
+            // Primeiro passo: Verifica se o servidor está aberto.
+            if (isAvailable()) {
+                // Segundo passo: Inicia a espera por um novo cliente
+                BluetoothSocket bluetoothSocket = bluetoothServerSocket.accept(timeout);
+                // Terceiro passo: Cria a classe com o novo cliente.
+                Client client = new Client(uuid.toString());
+                client.setClient(bluetoothSocket);
+                handlerPublish(Level.INFO, handlerDialog.CLIENT_RECEIVED);
+                return client;
+
+            // Caso o servidor não esteja disponível.
+            } else {
+                handlerPublish(Level.INFO, handlerDialog.CONNECTION_CLOSED);
+                return null;
+            }
         } catch (Exception e){
             handlerPublish(Level.SEVERE, e.toString());
             e.printStackTrace();
@@ -136,6 +188,21 @@ public class Server {
     private void handlerPublish(Level level, String dialog){
         if (handler != null){
             handler.publish(new LogRecord(level, dialog));
+        }
+    }
+
+    /**
+     * Fecha a conexão do servidor.
+     */
+    public void closeConnection() {
+        try {
+            if (isAvailable()) {
+                bluetoothServerSocket.close();
+            }
+            handlerPublish(Level.INFO, handlerDialog.CONNECTION_CLOSED);
+        } catch (Exception e){
+            handlerPublish(Level.SEVERE, e.toString());
+            e.printStackTrace();
         }
     }
 }

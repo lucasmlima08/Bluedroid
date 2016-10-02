@@ -20,7 +20,7 @@ public class DialogBuilder extends AlertDialog.Builder {
         // Formata o indexador do clique.
         indexClick = -1;
 
-        // Transforma em array de sequência de caracteres para apresentar no dialog.
+        // Transforma em array de sequência de caracteres para apresentar no handlerDialog.
         CharSequence[] charSequence = new CharSequence[list.size()];
         for (int i = 0; i < charSequence.length; i++) {
             charSequence[i] = list.get(i).getName();

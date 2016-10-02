@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.myllenno.bluetoothdroid.connection.Client;
 import com.myllenno.bluetoothdroid.connection.Server;
 import com.myllenno.bluetoothdroid.devices.DevicesPaired;
+import com.myllenno.bluetoothdroid.report.HandlerDialog;
 
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -20,6 +21,9 @@ public class Minichat extends Activity {
 
     private EditText etMessageSend, etMessageReceived;
     private TextView tvStatus, idUser, idFriend;
+
+    // Classe de verificação de eventos.
+    private HandlerDialog handlerDialog;
 
     private DevicesPaired devicesPaired;
 
@@ -51,6 +55,8 @@ public class Minichat extends Activity {
 
         devicesPaired = new DevicesPaired();
         userServer = new Server(stringUUID, stringPin);
+
+        handlerDialog = new HandlerDialog();
     }
 
     @Override
@@ -92,7 +98,7 @@ public class Minichat extends Activity {
         Thread thread  = new Thread(new Runnable() {
             @Override
             public void run() {
-                Client friendReceive = userServer.receiveClients(); // Aguarda um amigo.
+                Client friendReceive = userServer.receiveClient(); // Aguarda um amigo.
                 if (friendReceive != null) {
                     friend = friendReceive;
                     friend.openConnection();
@@ -111,7 +117,8 @@ public class Minichat extends Activity {
         try {
             if (friend == null) {
                 friend = new Client(stringUUID);
-                friend.openConnection(device);
+                friend.setClient(device);
+                friend.openConnection();
                 refreshTextViewThread(tvStatus, "Converse: " + device.getName());
                 statusReceiveMessages = true;
                 receiveMessages();
@@ -168,7 +175,7 @@ public class Minichat extends Activity {
         Handler handler = new Handler(){
             @Override
             public void publish(LogRecord record) {
-                if (record.getMessage().equals(devicesPaired.dialogDeviceSelected)){ // Selecionou um dispositivo
+                if (record.getMessage().equals(handlerDialog.DEVICE_SELECTED)){ // Selecionou um dispositivo
                     BluetoothDevice device = devicesPaired.getDeviceSelected();
                     connectFriend(device); // Conecta ao dispositivo escolhido.
                     idFriend.setText(device.getName());

@@ -9,15 +9,15 @@ import android.widget.Toast;
 import com.myllenno.bluetoothdroid.devices.DevicesPaired;
 import com.myllenno.bluetoothdroid.devices.DevicesUnpaired;
 import com.myllenno.bluetoothdroid.configuration.Support;
+import com.myllenno.bluetoothdroid.report.HandlerDialog;
 
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 public class DialogDevices extends AppCompatActivity {
 
-    private final String messageError = "Error";
-    private final String messageSelectDevicePaired = "SelectDevicePaired";
-    private final String messageSelectDeviceUnpaired = "SelectDeviceUnpaired";
+    // Classe de verificação de eventos.
+    private HandlerDialog handlerDialog;
 
     public Support support;
 
@@ -25,6 +25,8 @@ public class DialogDevices extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialog_devices);
+
+        handlerDialog = new HandlerDialog();
     }
 
     private DevicesPaired devicesPaired;
@@ -37,17 +39,17 @@ public class DialogDevices extends AppCompatActivity {
             @Override
             public void publish(LogRecord record) {
 
-                if (record.getMessage().equals(devicesPaired.dialogDeviceSelected)){ // Selecionou um dispositivo
+                if (record.getMessage().equals(handlerDialog.DEVICE_SELECTED)){ // Selecionou um dispositivo
 
                     BluetoothDevice device = devicesPaired.getDeviceSelected();
 
                     Toast.makeText(getApplicationContext(), "Device Selected: " + device.getName(), Toast.LENGTH_SHORT).show();
 
-                } else if (record.getMessage().equals(devicesPaired.dialogDeviceRefused)){ // Recusou o diálogo.
+                } else if (record.getMessage().equals(handlerDialog.DEVICE_REFUSED)){ // Recusou o diálogo.
 
                     Toast.makeText(getApplicationContext(), "Devices Refused!", Toast.LENGTH_SHORT).show();
 
-                } else if (record.getMessage().equals(devicesPaired.dialogDeviceEmpty)){ // Não há dispositivos pareados.
+                } else if (record.getMessage().equals(handlerDialog.EMPTY)){ // Não há dispositivos pareados.
 
                     Toast.makeText(getApplicationContext(), "No Paired Devices!", Toast.LENGTH_SHORT).show();
 
@@ -77,17 +79,17 @@ public class DialogDevices extends AppCompatActivity {
             @Override
             public void publish(LogRecord record) {
 
-                if (record.getMessage().equals(devicesUnpaired.dialogDeviceSelected)){ // Selecionou um dispositivo
+                if (record.getMessage().equals(handlerDialog.DEVICE_SELECTED)){ // Selecionou um dispositivo
 
                     BluetoothDevice device = devicesUnpaired.getDeviceSelected();
 
                     Toast.makeText(getApplicationContext(), "Device Selected: " + device.getName(), Toast.LENGTH_SHORT).show();
 
-                } else if (record.getMessage().equals(devicesUnpaired.dialogDeviceRefused)){ // Recusou o dialogo.
+                } else if (record.getMessage().equals(handlerDialog.DEVICE_REFUSED)){ // Recusou o dialogo.
 
                     Toast.makeText(getApplicationContext(), "Devices Refused!", Toast.LENGTH_SHORT).show();
 
-                } else if (record.getMessage().equals(devicesUnpaired.dialogDeviceCancel)){ // Cancelou a busca por dispositivos.
+                } else if (record.getMessage().equals(handlerDialog.CANCEL_DISCOVERING)){ // Cancelou a busca por dispositivos.
 
                     Toast.makeText(getApplicationContext(), "Cancel Discovering Devices!", Toast.LENGTH_SHORT).show();
 
